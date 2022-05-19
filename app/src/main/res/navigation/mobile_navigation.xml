@@ -15,6 +15,27 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.example.agatepedia.ui.camera.CameraFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_camera" />
+        tools:layout="@layout/fragment_camera" >
+        <action
+            android:id="@+id/action_navigation_dashboard_to_detailAgatepediaActivity"
+            app:destination="@id/detailAgatepediaActivity" />
+    </fragment>
+    <activity
+        android:id="@+id/detailAgatepediaActivity"
+        android:name="com.example.agatepedia.ui.detailagatepedia.DetailAgatepediaActivity"
+        android:label="activity_detail_agatepedia"
+        tools:layout="@layout/activity_detail_agatepedia" >
+        <argument
+            android:name="photo"
+            app:argType="java.io.File" />
+        <argument
+            android:name="isBackCamera"
+            app:argType="boolean"
+            android:defaultValue="true" />
+        <argument
+            android:name="isCamera"
+            app:argType="boolean"
+            android:defaultValue="true" />
+    </activity>
 
 </navigation>
