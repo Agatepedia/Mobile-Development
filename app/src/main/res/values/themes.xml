@@ -20,4 +20,9 @@
     </style>
     <style name="Theme.Agatepedia.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="Theme.Agatepedia.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    
+    <style name="TitleText" >
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 </resources>
