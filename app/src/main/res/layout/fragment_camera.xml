@@ -17,9 +17,21 @@
         android:layout_height="60dp"
         android:layout_marginBottom="64dp"
         android:background="@drawable/ic_capture"
+        android:contentDescription="@string/capture_description"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/galery"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@drawable/ic_galery"
+        android:layout_marginStart="16dp"
+        android:contentDescription="@string/galery_description"
+        app:layout_constraintBottom_toBottomOf="@+id/captureImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/captureImage" />
 
     <ImageView
         android:id="@+id/switchCamera"
@@ -27,8 +39,20 @@
         android:layout_height="40dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
+        android:contentDescription="@string/switch_camera_description"
         app:layout_constraintEnd_toEndOf="@+id/viewFinder"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/camera_switch" />
+
+    <ProgressBar
+        android:id="@+id/proggress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
