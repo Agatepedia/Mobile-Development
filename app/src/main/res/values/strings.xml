@@ -26,4 +26,5 @@
     <string name="failed_save_photo">failed to take picture</string>
     <string name="icon_apps">icon Apps</string>
     <string name="agate_image_results">agate image results</string>
+    <string name="agate_pictures">agate pictures</string>
 </resources>

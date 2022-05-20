@@ -11,4 +11,5 @@
 
     <color name="orange">#FF8644</color>
     <color name="title">#FFFFFF</color>
+    <color name="home_background">#F9F8FD</color>
 </resources>
