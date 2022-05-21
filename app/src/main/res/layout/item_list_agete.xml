@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+    style="@style/CardViewStyle"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -27,6 +29,7 @@
 
         <TextView
             android:id="@+id/agate_name"
+            style="@style/ListStyleText.Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/agete_photo"
@@ -34,14 +37,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:maxLines="1"
             android:layout_marginStart="20dp"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/black"
             tools:text="Merah Delima"/>
 
         <TextView
             android:id="@+id/agate_address"
+            style="@style/ListStyleText"
             android:layout_width="0dp"
+            android:maxLines="2"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/agete_photo"
             app:layout_constraintTop_toBottomOf="@id/agate_name"

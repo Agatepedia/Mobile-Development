@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/home_background"
     tools:context=".ui.home.HomeFragment">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -31,16 +30,19 @@
  
         <androidx.appcompat.widget.SearchView
             android:id="@+id/search_view"
+            style="@style/SearchViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="28dp"
             android:layout_marginTop="20dp"
+            app:elevation="100dp"
             android:focusable="false"
+            app:queryBackground="@null"
             app:iconifiedByDefault="false"
-            android:background="@drawable/white_background"
-            app:queryHint="@string/searchagate"/>
+            android:background="@drawable/search_view_background"
+            app:queryHint= "@string/searchagate"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.recyclerview.widget.RecyclerView
