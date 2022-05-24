@@ -1,8 +1,8 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
     <style name="Theme.Agatepedia" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/primary_color</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
@@ -13,6 +13,7 @@
         <item name="android:statusBarColor" >?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
         <item name="android:indeterminateTint">@color/orange</item>
+        <item name="android:colorBackground">@color/light_background</item>
     </style>
     <style name="Theme.Agatepedia.NoActionBar">
         <item name="windowActionBar">false</item>
@@ -20,4 +21,35 @@
     </style>
     <style name="Theme.Agatepedia.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
     <style name="Theme.Agatepedia.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="TitleText" >
+        <item name="android:textSize">28sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <style name="ListStyleText">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="ListStyleText.Title">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="CardViewStyle" parent="CardView">
+        <item name="cardBackgroundColor">@color/white</item>
+    </style>
+
+
+    <style name="DetailTextStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="DetailTextStyle.Title">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
 </resources>

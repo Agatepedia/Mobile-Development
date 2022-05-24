@@ -18,7 +18,9 @@
         tools:layout="@layout/fragment_camera" >
         <action
             android:id="@+id/action_navigation_dashboard_to_detailAgatepediaActivity"
-            app:destination="@id/detailAgatepediaActivity" />
+            app:destination="@id/detailAgatepediaActivity"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_left_out" />
     </fragment>
     <activity
         android:id="@+id/detailAgatepediaActivity"
