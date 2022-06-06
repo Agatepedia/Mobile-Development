@@ -4,39 +4,39 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Application
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.view.*
-import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.Navigation
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.example.agatepedia.databinding.FragmentCameraBinding
-import java.io.File
-import java.util.*
-import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import com.example.agatepedia.R
-import com.example.agatepedia.ui.detailagatepedia.DetailAgatepediaActivityArgs
-import com.example.agatepedia.utils.createFile
-import com.example.agatepedia.utils.uriToFiles
+import com.example.agatepedia.ml.Model
+import com.example.agatepedia.utils.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import org.tensorflow.lite.DataType
+import org.tensorflow.lite.support.common.ops.NormalizeOp
+import org.tensorflow.lite.support.image.ImageProcessor
+import org.tensorflow.lite.support.image.TensorImage
+import org.tensorflow.lite.support.image.ops.ResizeOp
+import org.tensorflow.lite.support.image.ops.Rot90Op
 import permissions.dispatcher.*
 
 @RuntimePermissions
@@ -52,6 +52,23 @@ class CameraFragment : Fragment() {
     private val executor = Executors.newSingleThreadExecutor()
     private var imageCapture: ImageCapture? = null
     private lateinit var viewGalery: View
+    private lateinit var bitmapBuffer: Bitmap
+    private var imageRotationDegress: Int = 0
+    private var pauseImage = false
+    private lateinit var camera: Camera
+    private var stateFlash = false
+    private lateinit var safeContext: Context
+
+    //process image resize to 300 x 300
+    private val tfImageProcessor by lazy {
+        ImageProcessor.Builder()
+            .add(ResizeOp(IMG_SIZE_X, IMG_SIZE_Y, ResizeOp.ResizeMethod.BILINEAR))
+            .add(NormalizeOp(NORMALIZE_MEAN, NORMALIZE_STD))
+            .add(Rot90Op(-imageRotationDegress / 90))
+            .build()
+    }
+
+    private val tfImage = TensorImage(DataType.FLOAT32)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,8 +86,18 @@ class CameraFragment : Fragment() {
 
         binding.switchCamera.setOnClickListener {
             lensFacing =
-                if (lensFacing.equals(CameraSelector.LENS_FACING_BACK)) CameraSelector.LENS_FACING_FRONT
-                else CameraSelector.LENS_FACING_BACK
+                if (lensFacing.equals(CameraSelector.LENS_FACING_BACK)) {
+                    binding.flash.visibility = View.GONE
+
+//                    turn off flash
+                    binding.flash.setImageDrawable(resources.getDrawable(R.drawable.ic_flash_on))
+                    stateFlash = false
+
+                    CameraSelector.LENS_FACING_FRONT
+                } else {
+                    binding.flash.visibility = View.VISIBLE
+                    CameraSelector.LENS_FACING_BACK
+                }
 
             setupCameraWithPermissionCheck()
         }
@@ -82,10 +109,20 @@ class CameraFragment : Fragment() {
         binding.captureImage.setOnClickListener { view ->
             takePhoto(view)
         }
+
+        binding.flash.setOnClickListener() { flashCamera() }
     }
 
     override fun onResume() {
         super.onResume()
+
+//  hide image preview
+        if (pauseImage) {
+            pauseImage = false
+            binding.imagePriview.visibility = View.GONE
+        }
+
+
         setupCameraWithPermissionCheck()
     }
 
@@ -114,13 +151,26 @@ class CameraFragment : Fragment() {
                 .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
                 .build()
 
+            imageAnalysis.setAnalyzer(executor, ImageAnalysis.Analyzer { image ->
+                if (!::bitmapBuffer.isInitialized) {
+                    bitmapBuffer =
+                        Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
+                    imageRotationDegress = image.imageInfo.rotationDegrees
+                }
+
+                image.use { bitmapBuffer.copyPixelsFromBuffer(image.planes[0].buffer) }
+                if (_binding != null) {
+                    predict(bitmapBuffer)
+                }
+            })
+
 //            Create a new camera selector each time, enforcing lens facing
             val cameraSelector = CameraSelector.Builder().requireLensFacing(lensFacing).build()
 
 //            Apply declared configs to CameraX using the same lifecycle owner
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
+                camera = cameraProvider.bindToLifecycle(
                     requireActivity() as LifecycleOwner,
                     cameraSelector,
                     preview,
@@ -131,6 +181,58 @@ class CameraFragment : Fragment() {
                 Log.e(TAG, "Camera Fail", e)
             }
         }, ContextCompat.getMainExecutor(requireContext()))
+    }
+
+    private fun predict(bitmap: Bitmap) {
+        val agateModel = Model.newInstance(safeContext)
+        val label = loadLabel(safeContext)
+
+
+        // converting bitmap into tensor flow image
+        val newBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
+        tfImage.load(newBitmap)
+        //resize 300 x 300
+        val tensorImage = tfImageProcessor.process(tfImage)
+
+//        process the tensorImage
+        val outputs = agateModel.process(tensorImage.tensorBuffer).outputFeature0AsTensorBuffer
+
+        val probabilistAsCategory = mutableListOf<Category>()
+
+        for (i in 0..outputs.floatArray.size - 1) {
+            probabilistAsCategory.add(Category(label[i], outputs.floatArray[i]))
+        }
+
+        val outputAgate = probabilistAsCategory.apply { sortByDescending { it.score } }
+        if (_binding != null) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                binding.tvPredict1.text =
+                    "${outputAgate[0].labelName} " + "%.0f".format(outputAgate[0].score * 100) + "%"
+                binding.tvPredict2.text =
+                    "${outputAgate[1].labelName} " + "%.0f".format(outputAgate[1].score * 100) + "%"
+                binding.tvPredict3.text =
+                    "${outputAgate[2].labelName} " + "%.0f".format(outputAgate[2].score * 100) + "%"
+            }
+        }
+
+    }
+
+    private fun flashCamera() {
+        val changeState = !stateFlash
+        if (!stateFlash) {
+            binding.flash.setImageDrawable(resources.getDrawable(R.drawable.ic_flash_off))
+            camera.cameraControl.enableTorch(true)
+        } else {
+            binding.flash.setImageDrawable(resources.getDrawable(R.drawable.ic_flash_on))
+            camera.cameraControl.enableTorch(false)
+        }
+        stateFlash = changeState
+
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        safeContext = context
     }
 
     @OnShowRationale(Manifest.permission.CAMERA)
@@ -156,6 +258,7 @@ class CameraFragment : Fragment() {
             .setMessage(messageResId)
             .show()
     }
+
 
     @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
@@ -201,6 +304,29 @@ class CameraFragment : Fragment() {
 
         val outputOptions = ImageCapture.OutputFileOptions.Builder(photoFile!!).build()
 
+//        pause image while pressing capture image
+        if (!pauseImage) {
+            pauseImage = true
+
+            val isFrontFacing = lensFacing.equals(CameraSelector.LENS_FACING_FRONT)
+
+            val matrix = Matrix().apply {
+                postRotate(imageRotationDegress.toFloat())
+                if (isFrontFacing) {
+                    postRotate(-180f)
+                    postScale(-1f, 1f)
+                }
+            }
+
+
+            val freezingImage = Bitmap.createBitmap(
+                bitmapBuffer, 0, 0, bitmapBuffer.width, bitmapBuffer.height, matrix, true
+            )
+
+            binding.imagePriview.setImageBitmap(freezingImage)
+            binding.imagePriview.visibility = View.VISIBLE
+        }
+
         imageCapture.takePicture(
             outputOptions,
             ContextCompat.getMainExecutor(requireContext()),
@@ -216,6 +342,11 @@ class CameraFragment : Fragment() {
                     view.findNavController().navigate(toDetailAgateActivity)
                     binding.proggressBar.visibility = View.GONE
                     binding.captureImage.isEnabled = true
+
+//                    turn off flash camera
+                    binding.flash.setImageDrawable(resources.getDrawable(R.drawable.ic_flash_on))
+                    stateFlash = false
+                    camera.cameraControl.enableTorch(false)
                 }
 
                 override fun onError(exception: ImageCaptureException) {
@@ -237,6 +368,13 @@ class CameraFragment : Fragment() {
     }
 
     companion object {
-        private val TAG = "camera"
+        private val TAG = CameraFragment::class.simpleName
+
+        //Model input size
+        private const val IMG_SIZE_X = 300
+        private const val IMG_SIZE_Y = 300
+
+        private const val NORMALIZE_MEAN = 0f
+        private const val NORMALIZE_STD = 1f
     }
 }

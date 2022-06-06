@@ -6,10 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".ui.camera.CameraFragment">
 
+
     <androidx.camera.view.PreviewView
         android:id="@+id/viewFinder"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <ImageView
+        android:id="@+id/image_priview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
 
     <ImageButton
         android:id="@+id/captureImage"
@@ -44,6 +52,16 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/camera_switch" />
 
+    <ImageView
+        android:id="@+id/flash"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_flash_on"
+        android:layout_marginTop="30dp"
+        app:layout_constraintEnd_toEndOf="@+id/switchCamera"
+        app:layout_constraintTop_toBottomOf="@id/switchCamera"/>
+
+
     <ProgressBar
         android:id="@+id/proggress_bar"
         android:layout_width="wrap_content"
@@ -54,5 +72,44 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginStart="12dp"
+        android:padding="12dp"
+        android:background="@drawable/predict_background"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_predict1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textColor="@color/orange"
+            android:textStyle="bold"
+            tools:text="Sungai Dareh 100%" />
+
+        <TextView
+            android:id="@+id/tv_predict2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
+            android:textColor="@color/orange"
+            tools:text="Sungai Dareh 100%" />
+
+        <TextView
+            android:id="@+id/tv_predict3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"
+            android:textColor="@color/orange"
+            tools:text="Sungai Dareh 100%" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -9,6 +9,8 @@ import android.net.Uri
 import android.os.Environment
 import android.util.Log
 import com.example.agatepedia.R
+import com.example.agatepedia.ui.detailagatepedia.DetailAgatepediaActivity
+import org.tensorflow.lite.support.common.FileUtil
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -82,3 +84,5 @@ fun uriToFiles(selectedImg: Uri, context: Context): File {
 
     return myFile
 }
+
+fun loadLabel(context: Context): List<String> = FileUtil.loadLabels(context, "labels.txt")
