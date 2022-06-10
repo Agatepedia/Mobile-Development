@@ -3,28 +3,28 @@
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
-    <string name="title_camera">Camera</string>
+    <string name="title_camera">Kamera</string>
     <string name="agatepedia">AgatePedia</string>
-    <string name="searchagate">Search Agate</string>
-    <string name="button_allow">yes</string>
-    <string name="button_deny">no</string>
-    <string name="message_permission_camera">We need your camera permission to analyze the agate</string>
-    <string name="denied_permission_camera">camera permission not granted</string>
-    <string name="galery_description">move to gallery to select image</string>
-    <string name="switch_camera_description">change camera view</string>
-    <string name="capture_description">take pictures for analysis</string>
+    <string name="searchagate">Cari Batu Akik</string>
+    <string name="button_allow">Ya</string>
+    <string name="button_deny">Tidak</string>
+    <string name="message_permission_camera">Kami membutuhkan izin kamera Anda untuk menganalisis batu akik</string>
+    <string name="denied_permission_camera">izin kamera tidak diberikan</string>
+    <string name="galery_description">Pindah ke galeri untuk memilih gambar</string>
+    <string name="switch_camera_description">Ubah tampilan kamera</string>
+    <string name="capture_description">mengambil gambar untuk analisis</string>
     <string name="title_activity_detail_agate">DetailAgateActivity</string>
-    <!-- Strings used for fragments for navigation -->
+
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="hello_first_fragment">Hello first fragment</string>
-    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="title_activity_detail_agatepedia">DetailAgatepediaActivity</string>
-    <string name="failed_save_photo">failed to take picture</string>
+    <string name="failed_save_photo">Gagal mengambil gambar</string>
     <string name="icon_apps">icon Apps</string>
-    <string name="agate_image_results">agate image results</string>
-    <string name="agate_pictures">agate pictures</string>
+    <string name="agate_image_results">Hasil gambar batu akik</string>
+    <string name="agate_pictures">Gambar batu akik</string>
+    <string name="price_text">Harga</string>
+    <string name="search_not_fond">Pencarian Tidak di temukan</string>
+    <string name="error_request">Swipe ke bawah untuk refresh</string>
 </resources>

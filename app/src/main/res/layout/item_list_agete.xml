@@ -40,7 +40,7 @@
             tools:text="Merah Delima"/>
 
         <TextView
-            android:id="@+id/agate_address"
+            android:id="@+id/agate_price"
             style="@style/ListStyleText"
             android:layout_width="0dp"
             android:maxLines="2"
@@ -48,7 +48,8 @@
             app:layout_constraintStart_toEndOf="@id/agete_photo"
             app:layout_constraintTop_toBottomOf="@id/agate_name"
             app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="10dp"
             android:layout_marginStart="20dp"
-            tools:text="@tools:sample/lorem/random"/>
+            tools:text="Harga Rp 200.000 – Rp 2.700.000"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
