@@ -289,7 +289,10 @@ class CameraFragment : Fragment() {
             val selectedImage: Uri = result.data?.data as Uri
             val myPhoto = uriToFiles(selectedImage, requireContext())
             val toDetailAgateActivity =
-                CameraFragmentDirections.actionNavigationDashboardToDetailAgatepediaActivity(myPhoto)
+                CameraFragmentDirections.actionNavigationDashboardToDetailAgatepediaActivity(
+                    myPhoto,
+                    null
+                )
             toDetailAgateActivity.isCamera = false
             viewGalery.findNavController().navigate(toDetailAgateActivity)
         }
@@ -334,7 +337,7 @@ class CameraFragment : Fragment() {
                 override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults) {
                     val toDetailAgateActivity =
                         CameraFragmentDirections.actionNavigationDashboardToDetailAgatepediaActivity(
-                            photoFile
+                            photoFile, null
                         )
                     toDetailAgateActivity.isBackCamera =
                         lensFacing == CameraSelector.LENS_FACING_BACK

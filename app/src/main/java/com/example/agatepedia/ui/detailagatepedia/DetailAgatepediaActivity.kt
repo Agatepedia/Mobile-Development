@@ -4,9 +4,18 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.navigation.navArgs
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.bumptech.glide.Glide
+import com.example.agatepedia.R
+import com.example.agatepedia.data.Result
 import com.example.agatepedia.databinding.ActivityDetailAgatepediaBinding
 import com.example.agatepedia.ml.Model
+import com.example.agatepedia.ui.ViewModelFactory
 import com.example.agatepedia.utils.Category
 import com.example.agatepedia.utils.loadLabel
 import com.example.agatepedia.utils.rotateBitmap
@@ -21,6 +30,13 @@ class DetailAgatepediaActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailAgatepediaBinding
 
     private val args: DetailAgatepediaActivityArgs by navArgs()
+
+    private var stateFromHome = false
+    private lateinit var agateName: String
+
+    private val viewModel: DetailViewModel by viewModels{
+        ViewModelFactory.getInstance()
+    }
 
     //process image resize to 300 x 300
     private val tfImageProcessor by lazy {
@@ -39,7 +55,29 @@ class DetailAgatepediaActivity : AppCompatActivity() {
         binding = ActivityDetailAgatepediaBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        showResult()
+        stateFromHome = args.isHome
+        if(!stateFromHome){
+            showResult()
+        }else{
+            binding.tvTitle.text = args.nameAgate
+            agateName = args.nameAgate.toString()
+            searchDataAgate(agateName)
+        }
+
+
+        binding.refreshLayout.setOnRefreshListener( object: SwipeRefreshLayout.OnRefreshListener{
+            override fun onRefresh() {
+                if(!stateFromHome){
+                    showResult()
+                }else{
+                    searchDataAgate(agateName)
+                }
+
+                binding.refreshLayout.isRefreshing = false
+            }
+        })
+
+
     }
 
     private fun showResult() {
@@ -49,8 +87,8 @@ class DetailAgatepediaActivity : AppCompatActivity() {
         val result: Bitmap
 
         if (isCamera) result =
-            rotateBitmap(BitmapFactory.decodeFile(myPhoto.path), isBackCamera) else
-            result = BitmapFactory.decodeFile(myPhoto.path)
+            rotateBitmap(BitmapFactory.decodeFile(myPhoto?.path), isBackCamera) else
+            result = BitmapFactory.decodeFile(myPhoto?.path)
 
         binding.agateImage.setImageBitmap(result)
 
@@ -82,6 +120,35 @@ class DetailAgatepediaActivity : AppCompatActivity() {
 
         val outputAgate = probabilistAsCategory.apply { sortByDescending { it.score } }
         binding.tvTitle.text = "${outputAgate[0].labelName} " + "%.0f".format(outputAgate[0].score * 100) + "%"
+        searchDataAgate(outputAgate[0].labelName)
+    }
+
+    fun searchDataAgate(agateName: String){
+        viewModel.searchAgateData(agateName).observe(this){ result ->
+            if(result != null){
+                when(result){
+                    is Result.Loading -> {
+                        binding.proggressBar.visibility = View.VISIBLE
+                    }
+                    is Result.Success -> {
+                        binding.proggressBar.visibility = View.GONE
+                        val agateData = result.data
+                        binding.tvDescription.text = agateData[0].penjelasan
+                        binding.tvPrice.text = agateData[0].harga
+                        if(stateFromHome){
+                            Glide.with(this)
+                                .load(agateData[0].gambar)
+                                .into(binding.agateImage)
+                        }
+                    }
+                    is Result.Error -> {
+                        binding.proggressBar.visibility = View.GONE
+
+                        Toast.makeText(this@DetailAgatepediaActivity, getString(R.string.error_request), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
     }
 
     companion object {

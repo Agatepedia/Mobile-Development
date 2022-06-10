@@ -52,4 +52,9 @@
         <item name="android:textSize">24sp</item>
     </style>
 
+    <style name="DetailTextStyle.Price">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
 </resources>
