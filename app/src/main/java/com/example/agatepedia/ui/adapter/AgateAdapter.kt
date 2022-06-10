@@ -32,10 +32,10 @@ class AgateAdapter : ListAdapter<AgateResponseItem, AgateAdapter.ViewHolder>(Dif
             .circleCrop()
             .into(binding.agetePhoto)
 
-        with(binding){
+        with(binding) {
             agateName.text = agate.jenis
             agatePrice.text = "${agate.harga}"
-            root.setOnClickListener{
+            root.setOnClickListener {
                 onItemClick?.invoke(agate, holder.itemView)
             }
         }

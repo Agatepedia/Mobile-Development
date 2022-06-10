@@ -8,17 +8,23 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navArgs
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.example.agatepedia.R
 import com.example.agatepedia.data.Result
+import com.example.agatepedia.data.local.entity.AgateEntity
 import com.example.agatepedia.databinding.ActivityDetailAgatepediaBinding
 import com.example.agatepedia.ml.Model
 import com.example.agatepedia.ui.ViewModelFactory
+import com.example.agatepedia.ui.home.HomeViewModel
 import com.example.agatepedia.utils.Category
 import com.example.agatepedia.utils.loadLabel
 import com.example.agatepedia.utils.rotateBitmap
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.common.ops.NormalizeOp
 import org.tensorflow.lite.support.image.ImageProcessor
@@ -33,9 +39,11 @@ class DetailAgatepediaActivity : AppCompatActivity() {
 
     private var stateFromHome = false
     private lateinit var agateName: String
+    private var bookmarkFunctional = false
+    private lateinit var agateLocalData: AgateEntity
 
-    private val viewModel: DetailViewModel by viewModels{
-        ViewModelFactory.getInstance()
+    private val viewModel: DetailViewModel by viewModels {
+        ViewModelFactory.getInstance(this)
     }
 
     //process image resize to 300 x 300
@@ -56,26 +64,29 @@ class DetailAgatepediaActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         stateFromHome = args.isHome
-        if(!stateFromHome){
+        if (!stateFromHome) {
             showResult()
-        }else{
+        } else {
             binding.tvTitle.text = args.nameAgate
             agateName = args.nameAgate.toString()
             searchDataAgate(agateName)
+            getBookmark(viewModel, agateName)
         }
 
 
-        binding.refreshLayout.setOnRefreshListener( object: SwipeRefreshLayout.OnRefreshListener{
+        binding.refreshLayout.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
-                if(!stateFromHome){
+                if (!stateFromHome) {
                     showResult()
-                }else{
+                } else {
                     searchDataAgate(agateName)
                 }
 
                 binding.refreshLayout.isRefreshing = false
             }
         })
+
+        binding.bookmark.setOnClickListener { saveOrDeleteBookmark() }
 
 
     }
@@ -119,14 +130,16 @@ class DetailAgatepediaActivity : AppCompatActivity() {
 
 
         val outputAgate = probabilistAsCategory.apply { sortByDescending { it.score } }
-        binding.tvTitle.text = "${outputAgate[0].labelName} " + "%.0f".format(outputAgate[0].score * 100) + "%"
+        binding.tvTitle.text =
+            "${outputAgate[0].labelName} " + "%.0f".format(outputAgate[0].score * 100) + "%"
         searchDataAgate(outputAgate[0].labelName)
+        getBookmark(viewModel, outputAgate[0].labelName)
     }
 
-    fun searchDataAgate(agateName: String){
-        viewModel.searchAgateData(agateName).observe(this){ result ->
-            if(result != null){
-                when(result){
+    fun searchDataAgate(agateName: String) {
+        viewModel.searchAgateData(agateName).observe(this) { result ->
+            if (result != null) {
+                when (result) {
                     is Result.Loading -> {
                         binding.proggressBar.visibility = View.VISIBLE
                     }
@@ -135,19 +148,79 @@ class DetailAgatepediaActivity : AppCompatActivity() {
                         val agateData = result.data
                         binding.tvDescription.text = agateData[0].penjelasan
                         binding.tvPrice.text = agateData[0].harga
-                        if(stateFromHome){
+                        if (stateFromHome) {
                             Glide.with(this)
                                 .load(agateData[0].gambar)
                                 .into(binding.agateImage)
                         }
+                        bookmarkFunctional = true
+
+                        agateLocalData =
+                            AgateEntity(
+                                agateData[0].jenis.toString(),
+                                agateData[0].harga.toString(),
+                                agateData[0].gambar.toString()
+                            )
                     }
                     is Result.Error -> {
                         binding.proggressBar.visibility = View.GONE
+                        bookmarkFunctional = false
 
-                        Toast.makeText(this@DetailAgatepediaActivity, getString(R.string.error_request), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@DetailAgatepediaActivity,
+                            getString(R.string.error_request),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
+        }
+    }
+
+    private fun getBookmark(viewModel: DetailViewModel, type: String) {
+        lifecycleScope.launch(Dispatchers.Default) {
+            val stateBookmarked = viewModel.getStateBookmark(type)
+
+            if (stateBookmarked) {
+                withContext(Dispatchers.Main) {
+                    binding.bookmark.setImageDrawable(getDrawable(R.drawable.ic_bookmark))
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    binding.bookmark.setImageDrawable(getDrawable(R.drawable.ic_bookmark_border))
+                }
+            }
+
+
+        }
+    }
+
+    private fun saveOrDeleteBookmark() {
+        if (bookmarkFunctional) {
+            lifecycleScope.launch(Dispatchers.Default) {
+                if (viewModel.getStateBookmark(agateLocalData.type)) {
+                    viewModel.deleteBookmark(agateLocalData.type)
+                    withContext(Dispatchers.Main) {
+                        binding.bookmark.setImageDrawable(getDrawable(R.drawable.ic_bookmark_border))
+                        Toast.makeText(
+                            this@DetailAgatepediaActivity,
+                            getString(R.string.erase_bookmark),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                } else {
+                    viewModel.insertBookmark(agateLocalData)
+                    withContext(Dispatchers.Main) {
+                        binding.bookmark.setImageDrawable(getDrawable(R.drawable.ic_bookmark))
+                        Toast.makeText(
+                            this@DetailAgatepediaActivity,
+                            getString(R.string.add_bookmark),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+
         }
     }
 

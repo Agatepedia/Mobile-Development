@@ -16,7 +16,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-
                 <ImageView
                     android:id="@+id/agate_image"
                     android:layout_width="280dp"
@@ -64,8 +63,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
+                        android:justificationMode="inter_word"
                         tools:text="@tools:sample/lorem/random" />
                 </LinearLayout>
+
+
+                <ImageView
+                    android:id="@+id/bookmark"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="25dp"
+                    android:contentDescription="@string/desc_bookmark"
+                    android:src="@drawable/ic_bookmark_border"
+                    app:layout_constraintEnd_toEndOf="@+id/desc_layout"
+                    app:layout_constraintTop_toTopOf="@+id/desc_layout" />
 
                 <View
                     android:layout_width="0dp"

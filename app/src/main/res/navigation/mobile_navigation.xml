@@ -9,7 +9,7 @@
         android:id="@+id/navigation_home"
         android:name="com.example.agatepedia.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" >
+        tools:layout="@layout/fragment_home">
         <action
             android:id="@+id/action_navigation_home_to_detailAgatepediaActivity"
             app:destination="@id/detailAgatepediaActivity" />
@@ -19,7 +19,7 @@
         android:id="@+id/navigation_dashboard"
         android:name="com.example.agatepedia.ui.camera.CameraFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_camera" >
+        tools:layout="@layout/fragment_camera">
         <action
             android:id="@+id/action_navigation_dashboard_to_detailAgatepediaActivity"
             app:destination="@id/detailAgatepediaActivity"
@@ -30,27 +30,36 @@
         android:id="@+id/detailAgatepediaActivity"
         android:name="com.example.agatepedia.ui.detailagatepedia.DetailAgatepediaActivity"
         android:label="activity_detail_agatepedia"
-        tools:layout="@layout/activity_detail_agatepedia" >
+        tools:layout="@layout/activity_detail_agatepedia">
         <argument
             android:name="photo"
             app:argType="java.io.File"
             app:nullable="true" />
         <argument
             android:name="isBackCamera"
-            app:argType="boolean"
-            android:defaultValue="true" />
+            android:defaultValue="true"
+            app:argType="boolean" />
         <argument
             android:name="isCamera"
-            app:argType="boolean"
-            android:defaultValue="true" />
+            android:defaultValue="true"
+            app:argType="boolean" />
         <argument
             android:name="isHome"
-            app:argType="boolean"
-            android:defaultValue="false" />
+            android:defaultValue="false"
+            app:argType="boolean" />
         <argument
             android:name="nameAgate"
             app:argType="string"
             app:nullable="true" />
     </activity>
+    <fragment
+        android:id="@+id/navigation_bookmark"
+        android:name="com.example.agatepedia.ui.bookmark.BookmarkFragment"
+        android:label="fragment_bookmark"
+        tools:layout="@layout/fragment_bookmark">
+        <action
+            android:id="@+id/action_navigation_bookmark_to_detailAgatepediaActivity"
+            app:destination="@id/detailAgatepediaActivity" />
+    </fragment>
 
 </navigation>

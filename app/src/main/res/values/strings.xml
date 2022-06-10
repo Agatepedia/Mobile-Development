@@ -27,4 +27,8 @@
     <string name="price_text">Harga</string>
     <string name="search_not_fond">Pencarian Tidak di temukan</string>
     <string name="error_request">Swipe ke bawah untuk refresh</string>
+    <string name="bookmark">Bookmark</string>
+    <string name="desc_bookmark">Klik Untuk Menyimpan Gambar</string>
+    <string name="erase_bookmark">Dihapus dari Bookmark</string>
+    <string name="add_bookmark">Ditambahkan ke Bookmark</string>
 </resources>

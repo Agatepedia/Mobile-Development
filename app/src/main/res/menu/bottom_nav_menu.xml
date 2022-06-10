@@ -10,4 +10,9 @@
         android:id="@+id/navigation_dashboard"
         android:icon="@drawable/camera"
         android:title="@string/title_camera" />
+
+    <item
+        android:id="@+id/navigation_bookmark"
+        android:icon="@drawable/ic_bookmark"
+        android:title="@string/bookmark"/>
 </menu>
