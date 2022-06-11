@@ -31,4 +31,6 @@
     <string name="desc_bookmark">Klik Untuk Menyimpan Gambar</string>
     <string name="erase_bookmark">Dihapus dari Bookmark</string>
     <string name="add_bookmark">Ditambahkan ke Bookmark</string>
+    <string name="info_boookmark_empty">Anda belum menyimpan apapun ke dalam bookmark</string>
+    <string name="desc_bookmark_empty">icon info bookmark tidak ada data apapun yang disimapn ke bookmark</string>
 </resources>

@@ -374,8 +374,8 @@ class CameraFragment : Fragment() {
         private val TAG = CameraFragment::class.simpleName
 
         //Model input size
-        private const val IMG_SIZE_X = 300
-        private const val IMG_SIZE_Y = 300
+        private const val IMG_SIZE_X = 150
+        private const val IMG_SIZE_Y = 150
 
         private const val NORMALIZE_MEAN = 0f
         private const val NORMALIZE_STD = 1f

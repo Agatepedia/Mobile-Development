@@ -20,4 +20,34 @@
         app:layout_constraintBottom_toBottomOf="parent"
         tools:listitem="@layout/item_list_bookmark"/>
 
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/info_bookmark"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:visibility="gone"
+        tools:visibility="visible"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:contentDescription="@string/desc_bookmark_empty"
+            android:src="@drawable/ic_info"/>
+
+        <TextView
+            style="@style/DetailTextStyle.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:text="@string/info_boookmark_empty"/>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

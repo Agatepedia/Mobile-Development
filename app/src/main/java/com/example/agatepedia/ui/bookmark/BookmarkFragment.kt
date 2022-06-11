@@ -80,6 +80,8 @@ class BookmarkFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.Default) {
             val dataAgate = viewModel.getDataAgate()
             withContext(Dispatchers.Main) {
+                if (dataAgate.size == 0) binding.infoBookmark.visibility =
+                    View.VISIBLE else binding.infoBookmark.visibility = View.GONE
                 agateAdapter.submitList(dataAgate)
             }
         }
